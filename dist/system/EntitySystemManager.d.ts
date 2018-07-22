@@ -1,18 +1,15 @@
 import { Manager } from "../manager";
 import { EntitySystem } from ".";
+import { PrereqMap } from "../util/structure/PrereqMap";
 export declare class EntitySystemManager extends Manager {
     static readonly ID: string;
-    private _systemOrderMap;
-    private _systems;
+    private _systemMap;
     constructor();
-    readonly systems: Map<string, EntitySystem>;
-    readonly systemOrder: Array<string>;
-    systemSort(a: any, b: any): 0 | 1 | -1;
+    readonly systems: PrereqMap<string, EntitySystem>;
     initialize(): void;
-    getSystemByID<SYS extends EntitySystem>(systemID: string): SYS;
-    getSystemUsedInContext<SYS extends EntitySystem>(systemID: string): SYS;
-    getSystemsForContext(systemSet?: Set<EntitySystem>): Set<EntitySystem>;
-    addSystem(system: EntitySystem, before?: string): void;
+    getSystem<SYS extends EntitySystem>(systemID: string): SYS;
+    getSystems(): Array<EntitySystem>;
+    addSystem(system: EntitySystem, after?: string[]): void;
     removeSystem(systemID: string): void;
     removeSystemOfContext(): void;
 }

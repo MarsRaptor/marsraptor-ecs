@@ -14,7 +14,7 @@ class ECSContext {
         return this._entitySystemManager;
     }
     get systemIDs() {
-        return this._systemIDs;
+        return this.systemManager.systems.keys;
     }
     constructor() {
         this._managers = new Map();
@@ -29,7 +29,6 @@ class ECSContext {
         this.setManager(this._entityMgr);
         this._entitySystemManager = new system_1.EntitySystemManager();
         this.setManager(this._entitySystemManager);
-        this._systemIDs = new Set();
         this.mAddedPerformer = {
             perform(observer, e) {
                 observer.added(e);
@@ -81,15 +80,15 @@ class ECSContext {
         this._disable.add(entity);
     }
     getSystem(systemID) {
-        return this.systemManager.getSystemByID(systemID);
+        return this.systemManager.getSystem(systemID);
     }
     getSystems() {
-        return this.systemManager.getSystemsForContext();
+        return this.systemManager.getSystems();
     }
-    setSystem(system, passive, before) {
+    setSystem(system, passive, ...after) {
         system.context = this;
         system.isPassive = passive || false;
-        this.systemManager.addSystem(system, before);
+        this.systemManager.addSystem(system, after);
         return system;
     }
     deleteSystem(system) {

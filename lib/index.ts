@@ -31,7 +31,7 @@
 //     protected processEntities(entities: Set<Entity>): void {
 //         entities.forEach(entity=>{
 //             let component:TestComponent =  entity.getComponent(TestComponent.ID) as TestComponent;
-//             console.log(component.testString);
+//             console.log("testing : ",component.testString);
 //         },this)
 //     }
     
@@ -55,7 +55,7 @@
 //             component.testString = "Hello World !";
 //         },this)
 //         this.context.getSystem(TestSystemLog.ID).isPassive = false;
-//         this.isPassive = false;
+//         this.isPassive = true;
 //     }
     
 // }
@@ -65,7 +65,7 @@
 
 // testContext.addEntity(testEntity);
 
-// testContext.setSystem(new TestSystemLog(),true);
+// testContext.setSystem(new TestSystemLog(),false,TestSystemSetToHello.ID);
 
 // testContext.setSystem(new TestSystemSetToHello());
 

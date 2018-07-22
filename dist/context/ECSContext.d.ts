@@ -8,7 +8,6 @@ export declare class ECSContext {
     private _componentMgr;
     private _entitySystemManager;
     private _managers;
-    private _systemIDs;
     private _added;
     private _changed;
     private _deleted;
@@ -22,7 +21,7 @@ export declare class ECSContext {
     readonly entityManager: EntityManager;
     readonly componentManager: ComponentManager;
     readonly systemManager: EntitySystemManager;
-    readonly systemIDs: Set<string>;
+    readonly systemIDs: Array<string>;
     constructor();
     createEntity(): Entity;
     getEntity(entityID: Guid): Entity;
@@ -33,8 +32,8 @@ export declare class ECSContext {
     enable(entity: Entity): void;
     disable(entity: Entity): void;
     getSystem<SYS extends EntitySystem>(systemID: any): SYS;
-    getSystems(): Set<EntitySystem>;
-    setSystem(system: EntitySystem, passive?: boolean, before?: string): EntitySystem;
+    getSystems(): Array<EntitySystem>;
+    setSystem(system: EntitySystem, passive?: boolean, ...after: string[]): EntitySystem;
     deleteSystem(system: EntitySystem): void;
     setManager(manager: Manager): Manager;
     getManager<MGR extends Manager>(managerID: string): MGR;
