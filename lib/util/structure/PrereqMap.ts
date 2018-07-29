@@ -3,8 +3,8 @@ import { PrereqEntry } from "./PrereqEntry";
 export class PrereqMap<K, V>{
 
     private _internalPrereqMap: Map<K, PrereqEntry<K, V>>;
-    private _orderedKeyList: K[];
-    private _orderedValueList: V[];
+    private _orderedKeyList: K[] = [];
+    private _orderedValueList: V[] = [];
 
     get size(): number {
         return this._internalPrereqMap.size;
@@ -23,7 +23,7 @@ export class PrereqMap<K, V>{
         for (let index = 0; index < this.keys.length; index++) {
             const key = this.keys[index];
             if (this.has(key)) {
-                tempMap.set(key, this.get(key));
+                tempMap.set(key, this.get(key) as V);
             }
         }
         return tempMap;
@@ -49,11 +49,11 @@ export class PrereqMap<K, V>{
         return false;
     }
 
-    public get(key: K): V {
+    public get(key: K): V | null {
         if (this._internalPrereqMap.has(key)) {
-            return this._internalPrereqMap.get(key).value;
+            return (this._internalPrereqMap.get(key) as PrereqEntry<K,V>).value as V | null;
         }
-        return undefined;
+        return null;
     }
 
     public has(key: K): boolean {

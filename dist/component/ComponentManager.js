@@ -2,15 +2,13 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const manager_1 = require("../manager");
 class ComponentManager extends manager_1.Manager {
-    constructor() {
-        super(ComponentManager.ID);
+    initialize() {
         this._components = new Map();
         this._deleted = new Set();
     }
-    initialize() { }
     getComponentsByID(componentID) {
         let components = this._components.get(componentID);
-        if (components == null) {
+        if (components === undefined) {
             components = new Map();
             this._components.set(componentID, components);
         }
@@ -18,18 +16,18 @@ class ComponentManager extends manager_1.Manager {
     }
     getComponent(entity, componentID) {
         let components = this._components.get(componentID);
-        if (components != null) {
+        if (components !== undefined) {
             return components.get(entity.id);
         }
-        return null;
+        return undefined;
     }
-    getComponentsFor(entity, componentSet) {
+    getComponentsFor(entity) {
         let componentIDs = entity.componentIDs;
-        componentSet = componentSet || new Set();
+        let componentSet = new Array();
         componentIDs.forEach(componentID => {
             let component = this.getComponent(entity, componentID);
-            if (component !== null) {
-                componentSet.add(component);
+            if (component) {
+                componentSet.push(component);
             }
         });
         return componentSet;
@@ -60,6 +58,5 @@ class ComponentManager extends manager_1.Manager {
         this._deleted.add(entity);
     }
 }
-ComponentManager.ID = "ComponentManager";
 exports.ComponentManager = ComponentManager;
 //# sourceMappingURL=ComponentManager.js.map

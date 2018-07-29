@@ -1,7 +1,7 @@
 
 export class PrereqEntry<K,V>{
     private _key:K;
-    private _value:V;
+    private _value:V | null;
     private _prerequisites:K[];
 
     constructor(proto:{key:K,value?:V},after?:K[]) {
@@ -14,11 +14,11 @@ export class PrereqEntry<K,V>{
         return this._key;
     }
 
-    get value() :V{
+    get value() :V | null{
         return this._value;
     }
 
-    set value(value:V) {
+    set value(value:V |null) {
         this._value = value;
     }
 

@@ -7,7 +7,7 @@ export declare class PrereqEntry<K, V> {
         value?: V;
     }, after?: K[]);
     readonly key: K;
-    value: V;
+    value: V | null;
     readonly prerequisites: K[];
     compareTo(prereqItem: PrereqEntry<K, V>): number;
 }

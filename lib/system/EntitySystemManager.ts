@@ -4,12 +4,10 @@ import { PrereqMap } from "../util/structure/PrereqMap";
 
 export class EntitySystemManager extends Manager {
 
-    public static readonly ID: string = "EntitySystemManager";
-
     private _systemMap: PrereqMap<string, EntitySystem>;
 
     constructor() {
-        super(EntitySystemManager.ID);
+        super();
         this._systemMap = new PrereqMap<string, EntitySystem>();
     }
 
@@ -30,14 +28,14 @@ export class EntitySystemManager extends Manager {
     }
 
     public addSystem(system: EntitySystem, after?: string[]): void {
-        this._systemMap.set(system.id, system,after);
+        this._systemMap.set(system.id, system,after as string[]);
     }
 
     public removeSystem(systemID: string): void {
         this._systemMap.delete(systemID);
     }
 
-    public removeSystemOfContext(): void {
+    public clearSystems(): void {
         this._systemMap.clear();
     }
 

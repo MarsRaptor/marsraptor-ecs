@@ -5,46 +5,47 @@ import { Component } from "../component";
 
 export class Entity {
 
-    private _id: Guid;
-    private _componentIDs: Set<string>;
-    private _systemIDs: Set<string>;
-    private _context: ECSContext;
+    readonly id: Guid;
+    readonly componentIDs: Set<string>;
+    readonly systemIDs: Set<string>;
 
-    get id(): Guid {
-        return this._id;
+    private _context!: ECSContext;
+
+    setContext<CTX extends ECSContext>(context: CTX) {
+        this._context = context;
     }
 
-    get componentIDs() : Set<string>{
-        return this._componentIDs;
-    }
-
-    get systemIDs() : Set<string>{
-        return this._systemIDs;
-    }
-
-    get context() : ECSContext{
-        return this._context;
+    getContext<CTX extends ECSContext>(): CTX {
+        return this._context as CTX;
     }
 
     get isActive() : boolean{
-        return this.context.entityManager.isActive(this.id);
+        return this.getContext().entityMgr.isActive(this.id);
     }
 
     get isEnabled() : boolean{
-        return this.context.entityManager.isEnabled(this.id);
+        return this.getContext().entityMgr.isEnabled(this.id);
     }
 
     constructor(context: ECSContext, id: Guid) {
+        this.id = id;
         this._context = context;
-        this._id = id;
-        this._componentIDs = new Set<string>();
-        this._systemIDs = new Set<string>();
+        this.componentIDs = new Set<string>();
+        this.systemIDs = new Set<string>();
         this.reset();
     }
 
     public addComponent( component:Component) :Entity{
-        this.context.componentManager.addComponent(this,component);
+        this.getContext().componentMgr.addComponent(this,component);
 		return this;
+    }
+
+    public getComponent<CMPNT extends Component>( componentID:string):CMPNT | undefined{
+        return this.getContext().componentMgr.getComponent(this,componentID);
+    }
+    
+    public getComponents():Array<Component>  {
+		return this.getContext().componentMgr.getComponentsFor(this);
     }
 
     public removeComponent(component:Component) :Entity{
@@ -52,20 +53,12 @@ export class Entity {
     }
     
     public removeComponentByType( componentID:string) {
-        this.context.componentManager.removeComponent(this,componentID);
+        this.getContext().componentMgr.removeComponent(this,componentID);
 		return this;
     }
 
-    public getComponent( componentID:string):Component {
-        return this.context.componentManager.getComponent(this,componentID);
-    }
-    
-    public getComponents(componentSet?:Set<Component> ):Set<Component>  {
-		return this.context.componentManager.getComponentsFor(this,componentSet);
-    }
-
     protected  reset() :void {
-		this._componentIDs.clear();
-		this._systemIDs.clear();
+		this.componentIDs.clear();
+		this.systemIDs.clear();
     }
 }

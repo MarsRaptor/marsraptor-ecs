@@ -4,20 +4,16 @@ const guid_typescript_1 = require("guid-typescript");
 const manager_1 = require("../manager");
 const _1 = require(".");
 class EntityManager extends manager_1.Manager {
-    constructor() {
-        super(EntityManager.ID);
+    initialize() {
         this._entities = new Map();
         this._disabled = new Set();
     }
-    initialize() {
-        // Nothing
-    }
     createEntityInstance() {
-        let entity = new _1.Entity(this.context, guid_typescript_1.Guid.create());
+        let entity = new _1.Entity(this.getContext(), guid_typescript_1.Guid.create());
         return entity;
     }
     getEntity(entityID) {
-        return this._entities.get(entityID);
+        return this._entities.get(entityID) || null;
     }
     added(entity) {
         this._entities.set(entity.id, entity);
@@ -39,6 +35,5 @@ class EntityManager extends manager_1.Manager {
         this._disabled.delete(entity.id);
     }
 }
-EntityManager.ID = "EntityManager";
 exports.EntityManager = EntityManager;
 //# sourceMappingURL=EntityManager.js.map

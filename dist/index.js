@@ -1,73 +1,74 @@
 "use strict";
-// import { Component } from "./component";
-// import { EntitySystem } from "./system";
-// import { Entity } from "./entity";
-// import { ECSContext } from "./context";
 Object.defineProperty(exports, "__esModule", { value: true });
-// class TestComponent extends Component{
-//     public static ID:string = "TestComponent";
-//     constructor(text:string) {
-//         super(TestComponent.ID);
-//         this.testString = text;
-//     }
-//     public testString:string;
-// }
-// class TestSystemLog extends EntitySystem {
-//     public static ID:string = "TestSystemLog";
-//     constructor() {
-//         super(TestSystemLog.ID,{oneOf:new Set([TestComponent.ID])});        
-//     }
-//     protected checkProcessing(): boolean {
-//         return true;
-//     }
-//     protected processEntities(entities: Set<Entity>): void {
-//         entities.forEach(entity=>{
-//             let component:TestComponent =  entity.getComponent(TestComponent.ID) as TestComponent;
-//             console.log("testing : ",component.testString);
-//         },this)
-//     }
-// }
-// class TestSystemSetToHello extends EntitySystem {
-//     public static ID:string = "TestSystemSetToHello";
-//     constructor() {
-//         super(TestSystemSetToHello.ID,{oneOf:new Set([TestComponent.ID])});        
-//     }
-//     protected checkProcessing(): boolean {
-//         return true;
-//     }
-//     protected processEntities(entities: Set<Entity>): void {
-//         entities.forEach(entity=>{
-//             let component:TestComponent =  entity.getComponent(TestComponent.ID) as TestComponent;
-//             component.testString = "Hello World !";
-//         },this)
-//         this.context.getSystem(TestSystemLog.ID).isPassive = false;
-//         this.isPassive = true;
-//     }
-// }
-// let testContext:ECSContext = new ECSContext();
-// let testEntity:Entity = testContext.createEntity();
-// testContext.addEntity(testEntity);
-// testContext.setSystem(new TestSystemLog(),false,TestSystemSetToHello.ID);
-// testContext.setSystem(new TestSystemSetToHello());
-// testEntity.addComponent(new TestComponent("DefaultText"));
-// testContext.initialize();
-// for (let i = 0; i <= 3; i++) {
-//     console.log("process START iteration #",i);
-//     testContext.process();
-//     console.log("process END iteration #",i);
-//     console.log("---");
-// }
-var component_1 = require("./component");
-exports.Component = component_1.Component;
-exports.ComponentManager = component_1.ComponentManager;
-var context_1 = require("./context");
-exports.ECSContext = context_1.ECSContext;
-var entity_1 = require("./entity");
-exports.Entity = entity_1.Entity;
-exports.EntityManager = entity_1.EntityManager;
-var manager_1 = require("./manager");
-exports.Manager = manager_1.Manager;
-var system_1 = require("./system");
-exports.EntitySystem = system_1.EntitySystem;
-exports.EntitySystemManager = system_1.EntitySystemManager;
+const component_1 = require("./component");
+const system_1 = require("./system");
+const context_1 = require("./context");
+const manager_1 = require("./manager");
+class LoggingECS extends context_1.ECSContext {
+    constructor() {
+        super();
+        this.loggingMgr = new LoggingManager();
+        this.setManager(this.loggingMgr);
+    }
+}
+class LoggingManager extends manager_1.Manager {
+    initialize() {
+        // NOTHING
+    }
+    log(...stuff) {
+        console.log(stuff.join(""));
+    }
+}
+class TestComponent extends component_1.Component {
+    constructor(text) {
+        super();
+        this.testString = text;
+    }
+}
+class TestSystemLog extends system_1.EntitySystem {
+    constructor() {
+        super({ oneOf: new Set([TestComponent.name]) });
+    }
+    processEntities(entities) {
+        entities.forEach(entity => {
+            let component = entity.getComponent(TestComponent.name);
+            if (component) {
+                this.getContext().loggingMgr.log("testing : ", component.id, " - ", component.testString);
+            }
+        }, this);
+    }
+}
+class TestSystemSetToHello extends system_1.EntitySystem {
+    constructor() {
+        super({ oneOf: new Set([TestComponent.name]) });
+    }
+    processEntities(entities) {
+        entities.forEach(entity => {
+            let component = entity.getComponent(TestComponent.name);
+            if (component) {
+                component.testString = "Hello World !";
+            }
+        }, this);
+        this.getContext().getSystem(TestSystemLog.name).isPassive = false;
+        this.isPassive = true;
+    }
+}
+let testContext = new LoggingECS();
+let testEntity = testContext.createEntity();
+testContext.addEntity(testEntity);
+testContext.setSystem(new TestSystemLog(), false, TestSystemSetToHello.name);
+testContext.setSystem(new TestSystemSetToHello());
+testContext.initialize();
+testEntity.addComponent(new TestComponent("DefaultText"));
+for (let i = 0; i <= 3; i++) {
+    console.log("process START iteration #", i);
+    testContext.process();
+    console.log("process END iteration #", i);
+    console.log("---");
+}
+// export {Component,ComponentManager} from './component'
+// export {ECSContext} from './context'
+// export {Entity,EntityManager,EntityObserver} from './entity'
+// export {Manager} from './manager'
+// export {EntitySystem,EntitySystemManager} from './system'
 //# sourceMappingURL=index.js.map

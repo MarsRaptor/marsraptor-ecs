@@ -6,6 +6,8 @@ class PrereqMap {
      *
      */
     constructor() {
+        this._orderedKeyList = [];
+        this._orderedValueList = [];
         this._internalPrereqMap = new Map();
         this.updateInternal();
     }
@@ -42,7 +44,7 @@ class PrereqMap {
         if (this._internalPrereqMap.has(key)) {
             return this._internalPrereqMap.get(key).value;
         }
-        return undefined;
+        return null;
     }
     has(key) {
         return this._internalPrereqMap.has(key);
