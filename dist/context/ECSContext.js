@@ -4,31 +4,19 @@ const entity_1 = require("../entity");
 const component_1 = require("../component");
 const system_1 = require("../system");
 class ECSContext {
-    get entityManager() {
-        return this._entityMgr;
-    }
-    get componentManager() {
-        return this._componentMgr;
-    }
-    get systemManager() {
-        return this._entitySystemManager;
-    }
-    get systemIDs() {
-        return this.systemManager.systems.keys;
-    }
     constructor() {
-        this._managers = new Map();
+        this.managers = new Map();
         this._added = new Set();
         this._changed = new Set();
         this._deleted = new Set();
         this._enable = new Set();
         this._disable = new Set();
-        this._componentMgr = new component_1.ComponentManager();
-        this.setManager(this._componentMgr);
-        this._entityMgr = new entity_1.EntityManager();
-        this.setManager(this._entityMgr);
-        this._entitySystemManager = new system_1.EntitySystemManager();
-        this.setManager(this._entitySystemManager);
+        this.componentMgr = new component_1.ComponentManager();
+        this.setManager(this.componentMgr);
+        this.entityMgr = new entity_1.EntityManager();
+        this.setManager(this.entityMgr);
+        this.systemManager = new system_1.EntitySystemManager();
+        this.setManager(this.systemManager);
         this.mAddedPerformer = {
             perform(observer, e) {
                 observer.added(e);
@@ -56,13 +44,13 @@ class ECSContext {
         };
     }
     createEntity() {
-        return this.entityManager.createEntityInstance();
+        return this.entityMgr.createEntityInstance();
     }
     getEntity(entityID) {
-        return this.entityManager.getEntity(entityID);
+        return this.entityMgr.getEntity(entityID);
     }
     initialize() {
-        this._managers.forEach(manager => manager.initialize());
+        this.managers.forEach(manager => manager.initialize());
     }
     addEntity(entity) {
         this._added.add(entity);
@@ -85,9 +73,9 @@ class ECSContext {
     getSystems() {
         return this.systemManager.getSystems();
     }
-    setSystem(system, passive, ...after) {
-        system.context = this;
-        system.isPassive = passive || false;
+    setSystem(system, passive = false, ...after) {
+        system.setContext(this);
+        system.isPassive = passive;
         this.systemManager.addSystem(system, after);
         return system;
     }
@@ -95,21 +83,21 @@ class ECSContext {
         this.systemManager.removeSystem(system.id);
     }
     setManager(manager) {
-        this._managers.set(manager.id, manager);
-        manager.context = this;
+        this.managers.set(manager.id, manager);
+        manager.setContext(this);
         return manager;
     }
     getManager(managerID) {
-        return this._managers.get(managerID);
+        return this.managers.get(managerID);
     }
     deleteManager(manager) {
-        this._managers.delete(manager.id);
+        this.managers.delete(manager.id);
     }
     notifySystems(performer, entity) {
         this.systemManager.systems.forEach(system => performer.perform(system, entity));
     }
     notifyManagers(performer, entity) {
-        this._managers.forEach(manager => performer.perform(manager, entity));
+        this.managers.forEach(manager => performer.perform(manager, entity));
     }
     check(entities, performer) {
         if (entities.size > 0) {
@@ -126,7 +114,7 @@ class ECSContext {
         this.check(this._disable, this.mDisabledPerformer);
         this.check(this._enable, this.mEnabledPerformer);
         this.check(this._deleted, this.mDeletedPerformer);
-        this.componentManager.clean();
+        this.componentMgr.clean();
         this.systemManager.systems.forEach(system => {
             if (!system.isPassive) {
                 system.process();

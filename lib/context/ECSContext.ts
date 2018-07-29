@@ -7,10 +7,10 @@ import { Manager } from "../manager";
 
 export class ECSContext {
 
-    private _entityMgr: EntityManager;
-    private _componentMgr: ComponentManager;
-    private _entitySystemManager:EntitySystemManager;
-    private _managers: Map<string,Manager>;
+    readonly entityMgr: EntityManager;
+    readonly componentMgr: ComponentManager;
+    readonly systemManager:EntitySystemManager;
+    readonly managers: Map<string,Manager> ;
 
     private _added: Set<Entity>;
     private _changed: Set<Entity>;
@@ -24,24 +24,8 @@ export class ECSContext {
     private mEnabledPerformer: Performer;
     private mDeletedPerformer: Performer;
 
-    get entityManager(): EntityManager {
-        return this._entityMgr;
-    }
-
-    get componentManager(): ComponentManager {
-        return this._componentMgr;
-    }
-
-    get systemManager() : EntitySystemManager{
-        return this._entitySystemManager;
-    }
-
-    get systemIDs() : Array<string>{
-        return this.systemManager.systems.keys;
-    }
-
     constructor() {
-        this._managers = new Map<string,Manager>();
+        this.managers = new Map<string,Manager>();
 
         this._added = new Set<Entity>();
         this._changed = new Set<Entity>();
@@ -49,14 +33,14 @@ export class ECSContext {
         this._enable = new Set<Entity>();
         this._disable = new Set<Entity>();
 
-        this._componentMgr = new ComponentManager();
-        this.setManager(this._componentMgr);
+        this.componentMgr = new ComponentManager();
+        this.setManager(this.componentMgr);
 
-        this._entityMgr = new EntityManager();
-        this.setManager(this._entityMgr);
+        this.entityMgr = new EntityManager();
+        this.setManager(this.entityMgr);
 
-        this._entitySystemManager = new EntitySystemManager();
-        this.setManager(this._entitySystemManager);
+        this.systemManager = new EntitySystemManager();
+        this.setManager(this.systemManager);
 
         this.mAddedPerformer = {
             perform(observer: EntityObserver, e: Entity): void {
@@ -90,15 +74,15 @@ export class ECSContext {
     }
 
     public createEntity(): Entity {
-        return this.entityManager.createEntityInstance();
+        return this.entityMgr.createEntityInstance();
     }
 
-    public getEntity(entityID: Guid): Entity {
-        return this.entityManager.getEntity(entityID);
+    public getEntity(entityID: Guid): Entity | null {
+        return this.entityMgr.getEntity(entityID);
     }
 
     public initialize(): void {
-        this._managers.forEach(manager=>manager.initialize());
+        this.managers.forEach(manager=>manager.initialize());
     }
 
     public addEntity(entity: Entity): void {
@@ -121,7 +105,7 @@ export class ECSContext {
         this._disable.add(entity);
     }
 
-    public getSystem<SYS extends EntitySystem>(systemID): SYS {
+    public getSystem<SYS extends EntitySystem>(systemID:string): SYS {
         return this.systemManager.getSystem(systemID);
     }
 
@@ -129,9 +113,9 @@ export class ECSContext {
         return this.systemManager.getSystems();
     }
 
-    public setSystem(system: EntitySystem, passive?: boolean,...after:string[]): EntitySystem {
-        system.context = this;
-        system.isPassive = passive || false;
+    public setSystem(system: EntitySystem, passive: boolean =false,...after:string[]): EntitySystem {
+        system.setContext(this);
+        system.isPassive = passive;
         this.systemManager.addSystem(system,after);
         return system;
     }
@@ -141,17 +125,17 @@ export class ECSContext {
     }
 
     public setManager(manager: Manager): Manager {
-        this._managers.set(manager.id, manager);
-        manager.context =this;
+        this.managers.set(manager.id, manager);
+        manager.setContext(this);
         return manager;
     }
 
     public getManager<MGR extends Manager>(managerID:string): MGR {
-        return this._managers.get(managerID) as MGR;
+        return this.managers.get(managerID) as MGR;
     }
 
     public deleteManager(manager: Manager): void {
-        this._managers.delete(manager.id);
+        this.managers.delete(manager.id);
     }
 
     private notifySystems(performer: Performer, entity: Entity): void {
@@ -159,7 +143,7 @@ export class ECSContext {
     }
 
     private notifyManagers(performer: Performer, entity: Entity): void {
-        this._managers.forEach(manager=>performer.perform(manager,entity));        
+        this.managers.forEach(manager=>performer.perform(manager,entity));        
     }
 
     private check(entities: Set<Entity>, performer: Performer): void {
@@ -180,7 +164,7 @@ export class ECSContext {
         this.check(this._enable, this.mEnabledPerformer);
         this.check(this._deleted, this.mDeletedPerformer);
 
-        this.componentManager.clean();
+        this.componentMgr.clean();
 
         this.systemManager.systems.forEach(system => {
             if (!system.isPassive) {

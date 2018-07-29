@@ -4,7 +4,7 @@ const manager_1 = require("../manager");
 const PrereqMap_1 = require("../util/structure/PrereqMap");
 class EntitySystemManager extends manager_1.Manager {
     constructor() {
-        super(EntitySystemManager.ID);
+        super();
         this._systemMap = new PrereqMap_1.PrereqMap();
     }
     get systems() {
@@ -25,10 +25,9 @@ class EntitySystemManager extends manager_1.Manager {
     removeSystem(systemID) {
         this._systemMap.delete(systemID);
     }
-    removeSystemOfContext() {
+    clearSystems() {
         this._systemMap.clear();
     }
 }
-EntitySystemManager.ID = "EntitySystemManager";
 exports.EntitySystemManager = EntitySystemManager;
 //# sourceMappingURL=EntitySystemManager.js.map

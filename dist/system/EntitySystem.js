@@ -1,8 +1,13 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 class EntitySystem {
-    get id() {
-        return this._id;
+    constructor(aspect) {
+        this.passive = false;
+        this.id = this.constructor.name;
+        this._actives = new Set();
+        this.allSet = new Set(aspect.allOff || []);
+        this.exclusionSet = new Set(aspect.noneOf || []);
+        this.oneSet = new Set(aspect.oneOf || []);
     }
     get isPassive() {
         return this.passive;
@@ -13,23 +18,19 @@ class EntitySystem {
     get actives() {
         return this.actives;
     }
-    set context(context) {
+    setContext(context) {
         this._context = context;
     }
-    get context() {
+    getContext() {
         return this._context;
-    }
-    constructor(id, aspect) {
-        this._id = id;
-        this._actives = new Set();
-        this.allSet = aspect.allOff || new Set();
-        this.exclusionSet = aspect.noneOf || new Set();
-        this.oneSet = aspect.oneOf || new Set();
     }
     inserted(entity) { }
     ;
     removed(entity) { }
     ;
+    checkProcessing() {
+        return true;
+    }
     initialize() {
         // Nothing
     }

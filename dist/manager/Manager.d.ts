@@ -1,11 +1,11 @@
 import { EntityObserver, Entity } from "../entity";
 import { ECSContext } from "../context";
 export declare abstract class Manager implements EntityObserver {
-    private _id;
-    private _context;
     readonly id: string;
-    context: ECSContext;
-    constructor(id: string);
+    private _context;
+    setContext<CTX extends ECSContext>(context: CTX): void;
+    getContext<CTX extends ECSContext>(): CTX;
+    constructor();
     abstract initialize(): void;
     added(entity: Entity): void;
     changed(entity: Entity): void;

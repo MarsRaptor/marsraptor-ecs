@@ -12,7 +12,7 @@ export declare class PrereqMap<K, V> {
     constructor();
     clear(): void;
     delete(key: K): boolean;
-    get(key: K): V;
+    get(key: K): V | null;
     has(key: K): boolean;
     set(key: K, value: V, after: K[]): PrereqMap<K, V>;
     entries(): IterableIterator<[K, V]>;

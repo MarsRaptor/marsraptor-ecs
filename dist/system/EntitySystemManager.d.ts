@@ -2,7 +2,6 @@ import { Manager } from "../manager";
 import { EntitySystem } from ".";
 import { PrereqMap } from "../util/structure/PrereqMap";
 export declare class EntitySystemManager extends Manager {
-    static readonly ID: string;
     private _systemMap;
     constructor();
     readonly systems: PrereqMap<string, EntitySystem>;
@@ -11,5 +10,5 @@ export declare class EntitySystemManager extends Manager {
     getSystems(): Array<EntitySystem>;
     addSystem(system: EntitySystem, after?: string[]): void;
     removeSystem(systemID: string): void;
-    removeSystemOfContext(): void;
+    clearSystems(): void;
 }

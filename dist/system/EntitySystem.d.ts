@@ -1,26 +1,26 @@
 import { EntityObserver, Entity } from "../entity";
 import { ECSContext } from "../context";
 export declare abstract class EntitySystem implements EntityObserver {
-    private _id;
+    readonly id: string;
     private _context;
     private allSet;
     private exclusionSet;
     private oneSet;
     private passive;
     private _actives;
-    readonly id: string;
     isPassive: boolean;
     readonly actives: Set<Entity>;
-    context: ECSContext;
-    constructor(id: string, aspect: {
-        allOff?: Set<string>;
-        noneOf?: Set<string>;
-        oneOf?: Set<string>;
+    setContext<CTX extends ECSContext>(context: CTX): void;
+    getContext<CTX extends ECSContext>(): CTX;
+    constructor(aspect: {
+        allOff?: Array<string>;
+        noneOf?: Array<string>;
+        oneOf?: Array<string>;
     });
     protected inserted(entity: Entity): void;
     protected removed(entity: Entity): void;
     protected abstract processEntities(entities: Set<Entity>): void;
-    protected abstract checkProcessing(): boolean;
+    protected checkProcessing(): boolean;
     initialize(): void;
     added(entity: Entity): void;
     changed(entity: Entity): void;

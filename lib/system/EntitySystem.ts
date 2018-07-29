@@ -4,21 +4,16 @@ import { ECSContext } from "../context";
 
 export abstract class EntitySystem implements EntityObserver {
 
-    private _id: string;
-
-    private _context: ECSContext;
+    readonly id: string;
+    private _context!: ECSContext;
     
     private allSet: Set<string>;
     private exclusionSet: Set<string>;
     private oneSet: Set<string>;
 
-    private passive: boolean;
+    private passive: boolean = false;
 
     private _actives: Set<Entity>;
-
-    get id(): string {
-        return this._id;
-    }
 
     get isPassive(): boolean {
         return this.passive;
@@ -32,26 +27,29 @@ export abstract class EntitySystem implements EntityObserver {
         return this.actives;
     }
 
-    set context(context: ECSContext) {
+    setContext<CTX extends ECSContext>(context: CTX) {
         this._context = context;
     }
 
-    get context(): ECSContext {
-        return this._context;
+    getContext<CTX extends ECSContext>(): CTX {
+        return this._context as CTX;
     }
 
-    constructor(id: string, aspect: { allOff?: Set<string>, noneOf?: Set<string>, oneOf?: Set<string> }) {
-        this._id = id;
+    constructor(aspect: { allOff?: Array<string>, noneOf?: Array<string>, oneOf?: Array<string> }) {
+        this.id = this.constructor.name;
         this._actives = new Set<Entity>();
-        this.allSet = aspect.allOff||new Set<string>();
-        this.exclusionSet = aspect.noneOf||new Set<string>();
-        this.oneSet = aspect.oneOf||new Set<string>();
+        this.allSet = new Set<string>(aspect.allOff || []);
+        this.exclusionSet = new Set<string>(aspect.noneOf || []);
+        this.oneSet = new Set<string>(aspect.oneOf || []);
     }
 
     protected inserted(entity: Entity): void { };
     protected removed(entity: Entity): void { };
     protected abstract processEntities(entities: Set<Entity>): void;
-    protected abstract checkProcessing(): boolean;
+
+    protected checkProcessing(): boolean{
+        return true;
+    }
 
     public initialize(): void {
         // Nothing
