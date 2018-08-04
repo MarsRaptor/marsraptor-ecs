@@ -1,6 +1,6 @@
 {
   "name": "marsraptor-ecs",
-  "version": "0.0.2-alpha.0",
+  "version": "0.0.2",
   "description": "Meat and potatoes Entity Component System Framework",
   "main": "dist/marsraptor-ecs.js",
   "module": "dist/marsraptor-ecs.es.js",
