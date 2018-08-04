@@ -38,7 +38,6 @@ export default {
     entry: "src/index.ts",
     sourceMap: true,
     moduleName: "__marsraptorECS",
-    intro: 'if (typeof GUID === "undefined") { throw "guid-typescript required"; }',
     banner,
     plugins,
 };
