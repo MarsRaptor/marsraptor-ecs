@@ -80,7 +80,7 @@ export default class ECSContext {
         return this.entityMgr.createEntityInstance();
     }
 
-    public getEntity(entityID: Guid): Entity | null {
+    public getEntity(entityID: Guid): Entity | undefined {
         return this.entityMgr.getEntity(entityID);
     }
 
@@ -93,19 +93,27 @@ export default class ECSContext {
     }
 
     public changedEntity(entity: Entity): void {
-        this._changed.add(entity);
+        if(this.getEntity(entity.id)){
+            this._changed.add(entity);
+        }
     }
 
     public deleteEntity(entity: Entity): void {
-        this._deleted.add(entity);
+        if(this.getEntity(entity.id)){
+            this._deleted.add(entity);
+        }
     }
 
     public enable(entity: Entity): void {
-        this._enable.add(entity);
+        if(this.getEntity(entity.id)){
+            this._enable.add(entity);
+        }
     }
 
     public disable(entity: Entity): void {
-        this._disable.add(entity);
+        if(this.getEntity(entity.id)){
+            this._disable.add(entity);
+        }
     }
 
     public getSystem<SYS extends EntitySystem>(systemID:string): SYS {

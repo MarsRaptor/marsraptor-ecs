@@ -162,7 +162,7 @@ declare namespace MarsRaptorECS{
         private mDeletedPerformer;
         constructor();
         createEntity(): Entity;
-        getEntity(entityID: Guid): Entity | null;
+        getEntity(entityID: Guid): Entity | undefined;
         initialize(): void;
         addEntity(entity: Entity): void;
         changedEntity(entity: Entity): void;
@@ -187,7 +187,7 @@ declare namespace MarsRaptorECS{
         private _disabled;
         initialize(): void;
         createEntityInstance(): Entity;
-        getEntity(entityID: Guid): Entity | null;
+        getEntity(entityID: Guid): Entity | undefined;
         added(entity: Entity): void;
         enabled(entity: Entity): void;
         disabled(entity: Entity): void;

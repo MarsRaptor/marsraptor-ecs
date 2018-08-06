@@ -18,8 +18,8 @@ export default class EntityManager extends Manager {
         return entity;
     }
 
-    public getEntity(entityID:Guid) :Entity | null {
-		return this._entities.get(entityID) || null;
+    public getEntity(entityID:Guid) :Entity | undefined {
+		return this._entities.get(entityID);
     }
 
     public added(entity: Entity): void {
